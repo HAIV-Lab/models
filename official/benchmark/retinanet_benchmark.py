@@ -344,12 +344,42 @@ class MaskRCNNBenchmarkReal(DetectionBenchmarkReal):
   def __init__(self, **kwargs):
     super(MaskRCNNBenchmarkReal, self).__init__(model='mask_rcnn', **kwargs)
 
+  @flagsaver.flagsaver
+  def benchmark_1_gpu_coco(self):
+    """Run detection model accuracy test with 1 GPU."""
+    self._setup()
+    params = self._params()
+    params['architecture']['use_bfloat16'] = False
+    params['train']['batch_size'] = 4
+    params['train']['total_steps'] = 200
+    params['train']['iterations_per_loop'] = 1
+    params['eval']['eval_samples'] = 4
+    FLAGS.num_gpus = 1
+    FLAGS.model_dir = self._get_model_dir('real_benchmark_1_gpu_coco')
+    FLAGS.strategy_type = 'one_device'
+    self._run_and_report_benchmark(params)
+
 
 class ShapeMaskBenchmarkReal(DetectionBenchmarkReal):
   """Short benchmark performance tests for ShapeMask model."""
 
   def __init__(self, **kwargs):
     super(ShapeMaskBenchmarkReal, self).__init__(model='shapemask', **kwargs)
+
+  @flagsaver.flagsaver
+  def benchmark_1_gpu_coco(self):
+    """Run detection model accuracy test with 1 GPU."""
+    self._setup()
+    params = self._params()
+    params['architecture']['use_bfloat16'] = False
+    params['train']['batch_size'] = 4
+    params['train']['total_steps'] = 200
+    params['train']['iterations_per_loop'] = 1
+    params['eval']['eval_samples'] = 4
+    FLAGS.num_gpus = 1
+    FLAGS.model_dir = self._get_model_dir('real_benchmark_1_gpu_coco')
+    FLAGS.strategy_type = 'one_device'
+    self._run_and_report_benchmark(params)
 
 
 if __name__ == '__main__':
